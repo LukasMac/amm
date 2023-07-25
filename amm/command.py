@@ -1,4 +1,6 @@
+import subprocess
 from . import ansi
+from . import history
 
 def load(filePath):
     lines = []
@@ -7,6 +9,11 @@ def load(filePath):
             lines = [Command.deserialize(l.strip('\n').strip('\r')) for l in f.readlines() if l]
     except:
         pass
+    return lines
+
+def load_history():
+    lines = [Command.deserialize(l.strip('\n').strip('\r'), True) for l in history.get_history() if l]
+
     return lines
 
 def save(commands, filePath):
@@ -25,30 +32,31 @@ def remove(commands, command):
         pass
 
 class Command(object):
-    '''A Command is composed of the shell command string and an optionnal alias'''
-    def __init__(self, cmd, alias):
+    '''A Command is composed of the shell command string and an optional alias'''
+    def __init__(self, cmd, alias = "", is_from_history = False):
         if not cmd:
             raise "empty command argument"
         self.cmd = cmd
         self.alias = alias
-        if not self.alias:
-            self.alias = ""
-        pass
+        self.is_from_history = is_from_history
 
     def __repr__(self):
+        res = self.cmd
+
         if self.alias and self.alias != self.cmd:
-            return self.cmd+" "+ansi.grey_text(self.alias)
-        else:
-            return self.cmd
+            res = res+" "+ansi.grey_text(self.alias)
+        if self.is_from_history:
+            res = "\U0001F551"+" "+res
+        return res
 
     @staticmethod
-    def deserialize(str):
+    def deserialize(str, is_from_history = False):
         if "##" in str:
             cmd, alias = str.split("##")
         else:
             cmd = str
             alias = ""
-        return Command(cmd, alias)
+        return Command(cmd, alias, is_from_history)
 
     def serialize(self):
         if self.alias:

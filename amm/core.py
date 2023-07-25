@@ -1,10 +1,12 @@
 # App logic
 from __future__ import print_function
 import os
+import subprocess
 from . import keys
 from . import readchar
 from . import command
 from . import renderer
+from . import history
 from .filter import filter_commands
 
 from sys import version_info, platform
@@ -25,10 +27,6 @@ def get_os():
 
 def get_user_marks_path():
     return os.path.join(os.getenv('AMM_DATA_HOME'), 'user_commands.txt')
-def get_tldr_os_marks_path():
-    return os.path.join(os.getenv('AMM_HOME'), 'tldr', get_os()+'.txt')
-def get_tldr_common_marks_path():
-    return os.path.join(os.getenv('AMM_HOME'), 'tldr', 'common.txt')
 
 
 def mark_command(cmd_string, alias):
@@ -58,7 +56,8 @@ def get_selected_command_or_input(search):
     ''' Display an interactive UI interface where the user can type and select commands
         this function returns the selected command if there is matches or the written characters in the prompt line if no matches are present
     '''
-    commands = command.load(get_user_marks_path()) + command.load(get_tldr_os_marks_path()) + command.load(get_tldr_common_marks_path())
+
+    commands = command.load(get_user_marks_path()) + command.load_history()
     state = State(commands, search)
     # draw the screen (prompt + matchd marks)
     renderer.refresh(state)
@@ -69,7 +68,6 @@ def get_selected_command_or_input(search):
     if not output:
         return state.input
     return output.cmd
-
 
 def remove_command(search):
     ''' Remove a command interactively '''
@@ -108,6 +106,16 @@ def read_line(state):
             state.set_input(state.input + chr(c))
         renderer.refresh(state)
     return output
+
+def remember_command(alias = None):
+    ''' Store last run command to user defined commands '''
+    last_run_command = history.get_last_run_command()
+
+    if last_run_command != None:
+        if not alias:
+            alias = keyboard_input("Alias?:")
+
+        mark_command(last_run_command, alias)
 
 class State(object):
     ''' The app State, including user written characters, matched commands, and selected one '''

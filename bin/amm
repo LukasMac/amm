@@ -18,15 +18,19 @@ def parse_arguments():
 
     parser_get = subparsers.add_parser("get", help="get commands that match a given search string")
     parser_get.add_argument("--search", type=str, help="Search string")  
-    parser_get.add_argument("--stdout", type=str, help="Where to store result(defaut to stdout)")
+    parser_get.add_argument("--stdout", type=str, help="Where to store result (default to stdout)")
     parser_get.set_defaults(func=cmd_get)
 
-    parser_get = subparsers.add_parser("remove", help="remove a marked command given an optionnal prefix")
+    parser_get = subparsers.add_parser("remove", help="remove a marked command given an optional prefix")
     parser_get.add_argument("--search", type=str, help="Search string")
     parser_get.set_defaults(func=cmd_remove)
 
     parser_get = subparsers.add_parser("edit", help="edit user defined commands in default editor")
     parser_get.set_defaults(func=cmd_edit)
+
+    parser_remember = subparsers.add_parser("remember", help="mark last run command")
+    parser_remember.add_argument("--alias", type=str, help="an alias of the command")
+    parser_remember.set_defaults(func=cmd_remember)
 
     args = parser.parse_args()
     return args.func(args)
@@ -34,7 +38,6 @@ def parse_arguments():
 
 def cmd_mark(args):
     core.mark_command(args.command, None)
-
 
 def cmd_get(args):
     output = core.get_selected_command_or_input(args.search)
@@ -47,13 +50,15 @@ def cmd_get(args):
     else:
         print(output)
 
-
 def cmd_remove(args):
     core.remove_command(args.search)
 
 def cmd_edit(args):
     editor = os.environ.get('EDITOR', '/usr/bin/vi')
     subprocess.call([editor,core.get_user_marks_path()])
+
+def cmd_remember(args):
+    core.remember_command(args.alias)
 
 def amm_sourced():
     if os.getenv('AMM_DATA_HOME'):

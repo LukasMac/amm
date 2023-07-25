@@ -1,6 +1,6 @@
 # I rather aliasing Amm than add it to the global variable $PATH or pollute /usr/local directory
 # this will make uninstalling easier and it's sufficient(for now)
-alias amm="${AMM_HOME}/bin/amm"
+alias amm="fc -W; ${AMM_HOME}/bin/amm"
 
 # default key bindings
 amm_key_mark="${AMM_KEY_MARK:-\C-k}"
@@ -37,9 +37,12 @@ function run_amm(){
     rm -f $tmp_file
 }
 
+
 if [[ -n "$ZSH_VERSION" ]]; then
     # zshell
     function _amm_get {
+        # Store current session history to file
+        fc -W
         # Add a letter and remove it from the buffer.
         # when using zsh autocomplete(pressing Tab), the BUFFER won't contain the trailing forward slash(which should happen when using zsh autocomplete for directories).
         # pressing a character then removing it makes sure that BUFFER contains what you see on the screen.

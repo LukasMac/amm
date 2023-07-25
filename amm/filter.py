@@ -9,11 +9,19 @@ def filter_commands(marks, search_string):
      For example: 'cd tonowhere' will match 'c','cd n' but not 'c ', 'c t'
     '''
     def sort_marks(marks, search_string):
-        return sorted(
-                marks,
+        sorted_marks = sorted(
+                filter(lambda x: x.is_from_history == False, marks),
                 key=lambda m:(string_score.score(m.cmd, search_string)*2 + string_score.score(m.alias, search_string)),
                 reverse=True
                 )
+        sorted_history_marks = sorted(
+                filter(lambda x: x.is_from_history == True, marks),
+                key=lambda m:(string_score.score(m.cmd, search_string)*2 + string_score.score(m.alias, search_string)),
+                reverse=True
+                )
+
+        return sorted_marks + sorted_history_marks
+
     def contained(candidate, container):
         tmp = container[:]
         try:
