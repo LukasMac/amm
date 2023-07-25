@@ -5,7 +5,7 @@ import os
 import platform
 import shutil
 import sys
-import marker
+import amm
 import subprocess
 import re
 
@@ -26,19 +26,19 @@ def write_to_file(path, data):
         f.write(data)
 
 
-def generate_marker_sh(config_dir, install_dir):
+def generate_amm_sh(config_dir, install_dir):
     ''' generate the sh that needs to be sourced '''
-    return ("export MARKER_DATA_HOME=\"%s\"" % config_dir +
-            "\nexport MARKER_HOME=\"%s\"" % install_dir +
-            "\nsource ${MARKER_HOME}/bin/marker.sh" +
+    return ("export AMM_DATA_HOME=\"%s\"" % config_dir +
+            "\nexport AMM_HOME=\"%s\"" % install_dir +
+            "\nsource ${AMM_HOME}/bin/amm.sh" +
             "\n"
             )
 
 
 def show_post_installation_message(config_dir_rel):
-    print("Marker installed successfully")
+    print("Amm installed successfully")
     print("\n")
-    sourced_file = '$HOME/%s/marker.sh' % config_dir_rel
+    sourced_file = '$HOME/%s/amm.sh' % config_dir_rel
     source_msg = "[[ -s \"%s\" ]] && source \"%s\"" % (sourced_file, sourced_file)
 
     if platform.system() == 'Darwin' and get_shell() == 'bash':
@@ -65,7 +65,7 @@ def verify_requirements():
             print(version_text)
             if major_version < 4 or (major_version == 4 and minor_version < 3):
                 print("your Bash version is too old: %s" % version_text, file=sys.stderr)
-                print("Marker requires Bash 4.3+", file=sys.stderr)
+                print("Amm requires Bash 4.3+", file=sys.stderr)
                 sys.exit(1)
         else:
             print("Couldn't extract bash version, please report the issue", file=sys.stderr)
@@ -80,15 +80,15 @@ def verify_requirements():
 def main():
     verify_requirements()
     print("---------------------------------------")
-    config_dir_relative_path = '.local/share/marker'
+    config_dir_relative_path = '.local/share/amm.sh'
     config_dir_abosulte_path = os.path.join(os.path.expanduser("~"), config_dir_relative_path)
     install_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
     mkdir(config_dir_abosulte_path)
     
     write_to_file(
-        os.path.join(config_dir_abosulte_path, 'marker.sh'),
-        generate_marker_sh(config_dir_abosulte_path, install_dir))
+        os.path.join(config_dir_abosulte_path, 'amm.sh'),
+        generate_amm_sh(config_dir_abosulte_path, install_dir))
 
     show_post_installation_message(config_dir_relative_path)
     print("---------------------------------------")

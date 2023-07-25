@@ -1,11 +1,11 @@
-# Marker
+# Amm
 
-![marker](https://cloud.githubusercontent.com/assets/2557967/14209204/d99db934-f81a-11e5-910c-9d34ac155d18.gif)
+Based off of [marker](https://github.com/pindexis/marker)
 
-Marker is a command palette for the terminal. It lets you bookmark commands (or commands templates) and easily retreive them with the help of a real-time fuzzy matcher.
+![amm](https://cloud.githubusercontent.com/assets/2557967/14209204/d99db934-f81a-11e5-910c-9d34ac155d18.gif)
 
-It's also shipped with many commands common usage(Thanks to [tldr](https://github.com/tldr-pages/tldr)).
-  
+"Amm" is a command palette for the terminal. the name is based on the sound usually made when trying to recall some memory or terminal command you keep forgeting :) It lets you bookmark commands (or commands templates) and easily retreive them with the help of a real-time fuzzy matcher.
+
 ## Features:
 - A UI selector that lets you easily select the desired command if more than one command is matched.
 - Fuzzy matching (through commands and their descriptions).
@@ -14,11 +14,11 @@ It's also shipped with many commands common usage(Thanks to [tldr](https://githu
 
 ## Usage
 - `Ctrl-space`: search for commands that match the current written string in the command-line.
-- `Ctrl-k` (or `marker mark`): Bookmark a command.
+- `Ctrl-k` (or `amm mark`): Bookmark a command.
 - `Ctrl-t`: place the cursor at the next placeholder, identified by '{{anything}}'
-- `marker remove`: remove a bookmark
+- `amm remove`: remove a bookmark
 
-You can customize key binding using environment variables, respectively with ```MARKER_KEY_GET```, ```MARKER_KEY_MARK``` and ```MARKER_KEY_NEXT_PLACEHOLDER```.
+You can customize key binding using environment variables, respectively with ```AMM_KEY_GET```, ```AMM_KEY_MARK``` and ```AMM_KEY_NEXT_PLACEHOLDER```.
 
 ## Requirements
 - python (2.7+ or 3.0+)
@@ -26,11 +26,11 @@ You can customize key binding using environment variables, respectively with ```
 - Linux Or OSX
 
 ##### Note:
-In OSX, it seems like Bash 3.x is the default shell which is not supported. you have to [update your Bash to 4.3+](http://apple.stackexchange.com/a/24635) or [change your shell to zshell](http://stackoverflow.com/a/1822126/1117720) in order to use Marker.
+In OSX, it seems like Bash 3.x is the default shell which is not supported. you have to [update your Bash to 4.3+](http://apple.stackexchange.com/a/24635) or [change your shell to zshell](http://stackoverflow.com/a/1822126/1117720) in order to use Amm.
 
 ## Installation
 
-`git clone --depth=1 https://github.com/pindexis/marker ~/.marker && ~/.marker/install.py`
+`git clone --depth=1 https://github.com/LukasMac/amm.sh ~/.amm && ~/.amm/install.py`
 
 ## License
 [MIT](LICENSE)

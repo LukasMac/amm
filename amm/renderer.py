@@ -18,8 +18,8 @@ def unicode_length(string):
         return len(string)
 
 def erase():
-    ''' the commandline cursor is always at the first line (Marker prompt)
-    Therefore, erasing the current and following lines clear all marker output
+    ''' the commandline cursor is always at the first line (Amm prompt)
+    Therefore, erasing the current and following lines clear all amm output
     '''
     ansi.move_cursor_line_beggining()
     ansi.erase_from_cursor_to_end()

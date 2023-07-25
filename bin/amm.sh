@@ -1,11 +1,11 @@
-# I rather aliasing Marker than add it to the global variable $PATH or pollute /usr/local directory
+# I rather aliasing Amm than add it to the global variable $PATH or pollute /usr/local directory
 # this will make uninstalling easier and it's sufficient(for now)
-alias marker="${MARKER_HOME}/bin/marker"
+alias amm="${AMM_HOME}/bin/amm"
 
 # default key bindings
-marker_key_mark="${MARKER_KEY_MARK:-\C-k}"
-marker_key_get="${MARKER_KEY_GET:-\C-@}"
-marker_key_next_placeholder="${MARKER_KEY_NEXT_PLACEHOLDER:-\C-t}"
+amm_key_mark="${AMM_KEY_MARK:-\C-k}"
+amm_key_get="${AMM_KEY_GET:-\C-@}"
+amm_key_next_placeholder="${AMM_KEY_NEXT_PLACEHOLDER:-\C-t}"
 
 function get_cursor_position(){
   # based on a script from http://invisible-island.net/xterm/xterm.faq.html
@@ -29,17 +29,17 @@ function place_cursor_next_line(){
 function place_cursor(){
   tput cup $1 $2
 }
-function run_marker(){
-    # instruct marker to store the result (completion path) into a temporary file
-    tmp_file=$(mktemp -t marker.XXXX)
-    </dev/tty ${MARKER_HOME}/bin/marker get --search="$1" --stdout="$tmp_file"
+function run_amm(){
+    # instruct amm to store the result (completion path) into a temporary file
+    tmp_file=$(mktemp -t amm.XXXX)
+    </dev/tty ${AMM_HOME}/bin/amm get --search="$1" --stdout="$tmp_file"
     result=$(<$tmp_file)
     rm -f $tmp_file
 }
 
 if [[ -n "$ZSH_VERSION" ]]; then
     # zshell
-    function _marker_get {
+    function _amm_get {
         # Add a letter and remove it from the buffer.
         # when using zsh autocomplete(pressing Tab), the BUFFER won't contain the trailing forward slash(which should happen when using zsh autocomplete for directories).
         # pressing a character then removing it makes sure that BUFFER contains what you see on the screen.
@@ -55,7 +55,7 @@ if [[ -n "$ZSH_VERSION" ]]; then
         word=$(echo "${BUFFER[0,offset]}" | grep -oE '[^\|]+$')
         place_cursor_next_line
         
-        run_marker "$word"
+        run_amm "$word"
         
         # append the completion path to the user buffer
         word_length=${#word}
@@ -64,23 +64,23 @@ if [[ -n "$ZSH_VERSION" ]]; then
         BUFFER=${BUFFER[1,$((offset-word_length))]}${result}${BUFFER[$((offset+word_length+1)),-1]}
         let "offset = offset - word_length + result_length"
 
-        # reset the absolute and relative cursor position, note that it's necessary to get row position after marker is run, because it may be changed during marker execution
+        # reset the absolute and relative cursor position, note that it's necessary to get row position after amm is run, because it may be changed during amm execution
         row=$(get_row_position)
         place_cursor $(($row - 1)) $col
         CURSOR=${offset}
     }
 
     # Mark the written string in the command-line
-    function _marker_mark_1 {
-        export TMP_MARKER="$BUFFER"
+    function _amm_mark_1 {
+        export TMP_AMM="$BUFFER"
         # Escape single quotes (keeping the string written by the user intact)
-        ESCAPED_COMMAND=$(echo "$TMP_MARKER" | sed "s/'/'\"'\"'/g")
-        BUFFER=" marker mark --command='${ESCAPED_COMMAND}'"
+        ESCAPED_COMMAND=$(echo "$TMP_AMM" | sed "s/'/'\"'\"'/g")
+        BUFFER=" amm mark --command='${ESCAPED_COMMAND}'"
         zle accept-line
     }
     # Set the user written string back in the command-line
-    function _marker_mark_2 {
-        BUFFER="$TMP_MARKER"
+    function _amm_mark_2 {
+        BUFFER="$TMP_AMM"
         zle end-of-line
     }
     # move the cursor the next placeholder 
@@ -95,16 +95,16 @@ if [[ -n "$ZSH_VERSION" ]]; then
         fi        
     }
 
-    zle -N _marker_get
+    zle -N _amm_get
     zle -N _move_cursor_to_next_placeholder
-    bindkey "$marker_key_get" _marker_get 
-    bindkey "$marker_key_next_placeholder" _move_cursor_to_next_placeholder
+    bindkey "$amm_key_get" _amm_get 
+    bindkey "$amm_key_next_placeholder" _move_cursor_to_next_placeholder
 
-    zle -N _marker_mark_1
-    bindkey '\emm1' _marker_mark_1
-    zle -N _marker_mark_2 
-    bindkey '\emm2' _marker_mark_2
-    bindkey -s "$marker_key_mark" '\emm1\emm2'
+    zle -N _amm_mark_1
+    bindkey '\emm1' _amm_mark_1
+    zle -N _amm_mark_2 
+    bindkey '\emm2' _amm_mark_2
+    bindkey -s "$amm_key_mark" '\emm1\emm2'
 
 elif [[ -n "$BASH" ]]; then
 
@@ -120,9 +120,9 @@ elif [[ -n "$BASH" ]]; then
         fi        
     }
 
-    # Look at zsh _marker_get docstring
+    # Look at zsh _amm_get docstring
     # In Bash the written string will be accessed via the 'READLINE_LINE' variable, and the cursor position via 'READLINE_POINT'. Those variables are read-write
-    function _marker_get {
+    function _amm_get {
         # pretty similar to zsh flow
         offset=${READLINE_POINT}
         READLINE_POINT=0
@@ -130,7 +130,7 @@ elif [[ -n "$BASH" ]]; then
 
         word=$(echo "${READLINE_LINE:0:offset}" | grep -oE '(\w| )+$')
 
-        run_marker "$word"
+        run_amm "$word"
 
         word_length=${#word}
         result_length=${#result}
@@ -143,23 +143,23 @@ elif [[ -n "$BASH" ]]; then
     }
 
      # mark the written string in the command-line
-    function _marker_mark_1 {
-        export TMP_MARKER="$READLINE_LINE"
+    function _amm_mark_1 {
+        export TMP_AMM="$READLINE_LINE"
         # Escape single quotes (keeping the string written by the user intact)
-        TMP_MARKER=$(echo "$TMP_MARKER" | sed "s/'/'\"'\"'/g")
-        READLINE_LINE=" marker mark --command='${TMP_MARKER}'"
+        TMP_AMM=$(echo "$TMP_AMM" | sed "s/'/'\"'\"'/g")
+        READLINE_LINE=" amm mark --command='${TMP_AMM}'"
     }
 
-    function _marker_mark_2 {
-        READLINE_LINE="$TMP_MARKER"
+    function _amm_mark_2 {
+        READLINE_LINE="$TMP_AMM"
         READLINE_POINT="${#READLINE_LINE}"
     }   
 
-    bind -x '"'"$marker_key_get"'":_marker_get'
+    bind -x '"'"$amm_key_get"'":_amm_get'
 
-    bind -x '"\em1":"_marker_mark_1"'
-    bind -x '"\em2":"_marker_mark_2"'
-    bind '"'"$marker_key_mark"'":"\em1\n\em2"'   
+    bind -x '"\em1":"_amm_mark_1"'
+    bind -x '"\em2":"_amm_mark_2"'
+    bind '"'"$amm_key_mark"'":"\em1\n\em2"'   
 
-    bind -x '"'"$marker_key_next_placeholder"'":"_move_cursor_to_next_placeholder"'
+    bind -x '"'"$amm_key_next_placeholder"'":"_move_cursor_to_next_placeholder"'
 fi

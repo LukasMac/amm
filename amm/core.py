@@ -24,11 +24,11 @@ def get_os():
         return 'unknown'
 
 def get_user_marks_path():
-    return os.path.join(os.getenv('MARKER_DATA_HOME'), 'user_commands.txt')
+    return os.path.join(os.getenv('AMM_DATA_HOME'), 'user_commands.txt')
 def get_tldr_os_marks_path():
-    return os.path.join(os.getenv('MARKER_HOME'), 'tldr', get_os()+'.txt')
+    return os.path.join(os.getenv('AMM_HOME'), 'tldr', get_os()+'.txt')
 def get_tldr_common_marks_path():
-    return os.path.join(os.getenv('MARKER_HOME'), 'tldr', 'common.txt')
+    return os.path.join(os.getenv('AMM_HOME'), 'tldr', 'common.txt')
 
 
 def mark_command(cmd_string, alias):
