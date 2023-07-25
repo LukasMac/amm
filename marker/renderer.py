@@ -35,8 +35,8 @@ def refresh(state):
         sys.stdout.write(lines[-1])
     # go up
     ansi.move_cursor_previous_lines(num_rows - 1)
-    # palce the cursor at the end of first line
-    ansi.move_cursor_horizental(len(lines[0])+1)
+    # place the cursor at the end of first line
+    ansi.move_cursor_horizontal(len(lines[0])+1)
     ansi.flush()
 
 def _construct_output(state):
@@ -80,5 +80,6 @@ def _construct_output(state):
         not_found_line = 'Nothing found'
         displayed_lines.append(not_found_line)
         num_rows += number_of_rows(not_found_line)
+
     return displayed_lines, num_rows
 

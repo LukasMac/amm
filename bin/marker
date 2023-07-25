@@ -2,6 +2,7 @@
 from __future__ import print_function
 import sys
 import argparse
+import subprocess
 import os
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..'))
 from marker import core
@@ -24,8 +25,8 @@ def parse_arguments():
     parser_get.add_argument("--search", type=str, help="Search string")
     parser_get.set_defaults(func=cmd_remove)
 
-    parser_update = subparsers.add_parser("update", help="update tldr cache")
-    parser_update.set_defaults(func=cmd_update)
+    parser_get = subparsers.add_parser("edit", help="edit user defined commands in default editor")
+    parser_get.set_defaults(func=cmd_edit)
 
     args = parser.parse_args()
     return args.func(args)
@@ -50,8 +51,9 @@ def cmd_get(args):
 def cmd_remove(args):
     core.remove_command(args.search)
 
-def cmd_update():
-    core.update_cache()
+def cmd_edit(args):
+    editor = os.environ.get('EDITOR', '/usr/bin/vi')
+    subprocess.call([editor,core.get_user_marks_path()])
 
 def marker_sourced():
     if os.getenv('MARKER_DATA_HOME'):

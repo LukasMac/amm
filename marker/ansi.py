@@ -51,7 +51,7 @@ def move_cursor_line_beggining():
     sys.stdout.write(_CURSOR_COLUMN(0))
 
 
-def move_cursor_horizental(n):
+def move_cursor_horizontal(n):
     sys.stdout.write(_CURSOR_COLUMN(n))
 
 
