@@ -6,9 +6,10 @@ def get_history():
     history_file_path = _get_history_file_path()
 
     try:
-        with open(history_file_path, 'r') as f:
+        with open(history_file_path, 'r', encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
-    except:
+    except Exception as e:
+        print('Error while getting history commands:', e)
         pass
   
     return lines

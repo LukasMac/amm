@@ -110,6 +110,7 @@ def read_line(state):
 def remember_command(alias = None):
     ''' Store last run command to user defined commands '''
     last_run_command = history.get_last_run_command()
+    print('Remembering command:', last_run_command)
 
     if last_run_command != None:
         if not alias:
