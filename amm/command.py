@@ -14,7 +14,7 @@ def load(filePath):
 def load_history():
     lines = [Command.deserialize(l.strip('\n').strip('\r'), True) for l in history.get_history() if l]
 
-    return lines
+    return [x for x in lines if x is not None]
 
 def save(commands, filePath):
     with open(filePath, 'w') as f:
@@ -51,6 +51,9 @@ class Command(object):
 
     @staticmethod
     def deserialize(str, is_from_history = False):
+        if not str:
+            return None
+
         if "##" in str:
             cmd, alias = str.split("##")
         else:
